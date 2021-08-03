@@ -1,8 +1,6 @@
 package ru.myitschool.ask
 
-import android.app.Notification
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -32,9 +30,24 @@ class ContinuousSpeechRecognition : Service(), RecognitionListener {
     }
 
     private fun continueSpeechRecognition() {
-        speechRecognizer.destroy()
-        speechRecognizer.setRecognitionListener(this)
-        speechRecognizer.startListening(recognizingIntent)
+        SoundEffects.getInstance().setOtherSoundsMuting(true)
+        speechRecognizer.run {
+            destroy()
+            setRecognitionListener(this@ContinuousSpeechRecognition)
+            startListening(recognizingIntent)
+        }
+    }
+
+    private fun createNotificationChannelIfNeeded() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            val id = Constants.NOTIFICATION_CHANNEL_ID
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(id, id, importance)
+
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
     private fun buildNotification(context: Context): Notification {
@@ -51,7 +64,9 @@ class ContinuousSpeechRecognition : Service(), RecognitionListener {
         return notificationBuilder.build()
     }
 
+
     // Service methods
+
 
     override fun onCreate() {
         super.onCreate()
@@ -61,16 +76,23 @@ class ContinuousSpeechRecognition : Service(), RecognitionListener {
     override fun onDestroy() {
         super.onDestroy()
         speechRecognizer.destroy()
+        SoundEffects.getInstance().run {
+            executeEffect(SoundEffects.SOUND_OFF)
+            setOtherSoundsMuting(false)
+        }
         Log.d(Constants.MY_TAG, "CSR: onDestroy")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(Constants.MY_TAG, "CSR: onStartCommand")
 
+        createNotificationChannelIfNeeded()
         startForeground(Constants.NOTIFICATION_ID, buildNotification(this))
 
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
         continueSpeechRecognition()
+
+        SoundEffects.getInstance().executeEffect(SoundEffects.SOUND_ON)
 
         return START_STICKY
     }
@@ -79,7 +101,9 @@ class ContinuousSpeechRecognition : Service(), RecognitionListener {
         return null
     }
 
+
     // RecognitionListener methods
+
 
     override fun onReadyForSpeech(p0: Bundle?) {}
 
@@ -119,6 +143,9 @@ class ContinuousSpeechRecognition : Service(), RecognitionListener {
             results += "Version ${i + 1}: ${data[i]}\n"
         }
         Log.d(Constants.MY_TAG, results)
+
+        if (results.contains("мотылёк", true))
+            SoundEffects.getInstance().executeEffect(SoundEffects.SOUND_SUCCESS)
 
         continueSpeechRecognition()
     }

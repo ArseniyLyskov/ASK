@@ -1,8 +1,6 @@
 package ru.myitschool.ask
 
 import android.app.Activity
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -20,27 +18,15 @@ class AskActivity : AppCompatActivity() {
         ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun checkPermissionsAvailability(activity: Activity) {
+    private fun requestPermissionsIfNeeded(activity: Activity) {
         if (!isAllPermissionsGranted()) {
             ActivityCompat.requestPermissions(activity, Constants.REQUIRED_PERMISSIONS, 10)
-        }
+        } //TODO: check result
     }
 
     private fun checkListeningAvailability(context: Context) {
         if (!SpeechRecognizer.isRecognitionAvailable(context)) {
-            return
-        }
-    }
-
-    private fun createNotificationChannelIfNeeded() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            val id = Constants.NOTIFICATION_CHANNEL_ID
-            val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel = NotificationChannel(id, id, importance)
-
-            val notificationManager: NotificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
+            return //TODO: explanation
         }
     }
 
@@ -49,11 +35,11 @@ class AskActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        checkPermissionsAvailability(this)
+        requestPermissionsIfNeeded(this)
         checkListeningAvailability(this)
+        SoundEffects.createInstance(this)
 
         binding.start.setOnClickListener {
-            createNotificationChannelIfNeeded()
             startService(Intent(this, ContinuousSpeechRecognition::class.java))
         }
 
