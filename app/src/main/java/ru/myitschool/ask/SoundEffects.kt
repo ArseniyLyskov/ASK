@@ -13,6 +13,7 @@ class SoundEffects private constructor(context: Context) {
     private val soundOff = buildMediaPlayer(context, R.raw.ask_off_sound)
     private val soundSuccess = buildMediaPlayer(context, R.raw.ask_success_sound)
     private val soundFailure = buildMediaPlayer(context, R.raw.ask_failure_sound)
+    private var muteSelf = false
 
     companion object {
         private lateinit var INSTANCE: SoundEffects
@@ -37,6 +38,63 @@ class SoundEffects private constructor(context: Context) {
         }
     }
 
+    fun setVolumeLevel(volumeLevel: Int) {
+        val correctedLevel =
+            when {
+                volumeLevel < 1 -> getMinVolumeLevel().toInt()
+                volumeLevel > getMaxVolumeLevel() -> getMaxVolumeLevel()
+                else -> volumeLevel
+            }
+        audioManager.setStreamVolume(AudioManager.STREAM_RING, correctedLevel, AudioManager.FLAG_SHOW_UI)
+    }
+
+    fun setMute(mute: Boolean) {
+        muteSelf = mute
+    }
+
+    fun getTenPointVolumeLevel() =
+        audioManager.getStreamVolume(AudioManager.STREAM_RING) / getMaxVolumeLevel().toFloat() * 10f
+
+    fun getMaxVolumeLevel() =
+        audioManager.getStreamMaxVolume(AudioManager.STREAM_RING)
+
+    fun getMinVolumeLevel() =
+        audioManager.getStreamMaxVolume(AudioManager.STREAM_RING) / 10f
+
+    fun setOtherSoundsMuting(mute: Boolean) {
+        fun muteStreamsExceptRing(streams: IntArray) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                streams.forEach { stream ->
+                    audioManager.adjustStreamVolume(
+                        stream,
+                        if (mute) AudioManager.ADJUST_MUTE else AudioManager.ADJUST_UNMUTE,
+                        0
+                    )
+                }
+                audioManager.adjustStreamVolume(
+                    AudioManager.STREAM_RING,
+                    if (muteSelf) AudioManager.ADJUST_MUTE else AudioManager.ADJUST_UNMUTE,
+                    0
+                )
+            } else {
+                streams.forEach { stream ->
+                    audioManager.setStreamMute(stream, mute)
+                }
+                audioManager.setStreamMute(AudioManager.STREAM_RING, muteSelf)
+            }
+        }
+
+        muteStreamsExceptRing(
+            intArrayOf(
+                AudioManager.STREAM_MUSIC,
+                AudioManager.STREAM_NOTIFICATION,
+                AudioManager.STREAM_ALARM,
+                AudioManager.STREAM_SYSTEM,
+                AudioManager.STREAM_DTMF
+            )
+        )
+    }
+
     private fun buildMediaPlayer(context: Context, resid: Int): MediaPlayer {
         val mediaPlayer = MediaPlayer()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -54,30 +112,6 @@ class SoundEffects private constructor(context: Context) {
         )
         mediaPlayer.prepare()
         return mediaPlayer
-    }
-
-    fun setOtherSoundsMuting(mute: Boolean) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            audioManager.adjustStreamVolume(
-                AudioManager.STREAM_MUSIC,
-                if (mute) AudioManager.ADJUST_MUTE else AudioManager.ADJUST_UNMUTE,
-                0
-            )
-            audioManager.adjustStreamVolume(
-                AudioManager.STREAM_NOTIFICATION,
-                if (mute) AudioManager.ADJUST_MUTE else AudioManager.ADJUST_UNMUTE,
-                0
-            )
-            audioManager.adjustStreamVolume(
-                AudioManager.STREAM_SYSTEM,
-                if (mute) AudioManager.ADJUST_MUTE else AudioManager.ADJUST_UNMUTE,
-                0
-            )
-        } else {
-            audioManager.setStreamMute(AudioManager.STREAM_MUSIC, mute)
-            audioManager.setStreamMute(AudioManager.STREAM_NOTIFICATION, mute)
-            audioManager.setStreamMute(AudioManager.STREAM_SYSTEM, mute)
-        }
     }
 
 }

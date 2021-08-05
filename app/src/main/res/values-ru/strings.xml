@@ -1,0 +1,77 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">ASK</string>
+
+    <string name="sleep_notification_title">ASK в режиме сна…</string>
+    <string name="sleep_notification_text">Скажите \"ASK, проснись!\" для перехода в слушающий режим</string>
+    <string name="listening_notification_title">ASK в режиме прослушивания…</string>
+    <string name="listening_notification_text">Скажите \"ASK, спи!\" для перехода в спящий режим</string>
+
+    <string-array name="keywords_name" tools:ignore="InconsistentArrays">
+        <item>ask</item>
+        <item>аск</item>
+    </string-array>
+
+    <string-array name="keywords_wake_up" tools:ignore="InconsistentArrays">
+        <item>проснуться</item>
+        <item>проснись</item>
+        <item>слушать</item>
+        <item>слушай</item>
+    </string-array>
+    <string-array name="keywords_sleep" tools:ignore="InconsistentArrays">
+        <item>спать</item>
+        <item>спи</item>
+    </string-array>
+
+    <string-array name="keywords_mute" tools:ignore="InconsistentArrays">
+        <item>выключить звук</item>
+        <item>выключи звук</item>
+        <item>без звука</item>
+    </string-array>
+    <string-array name="keywords_unmute" tools:ignore="InconsistentArrays">
+        <item>включить звук</item>
+        <item>включи звук</item>
+        <item>со звуком</item>
+    </string-array>
+
+    <string-array name="keywords_volume" tools:ignore="InconsistentArrays">
+        <item>громкость</item>
+        <item>уровень</item>
+        <item>звук</item>
+        <item>сделай</item>
+    </string-array>
+    <string-array name="keywords_max" tools:ignore="InconsistentArrays">
+        <item>максимум</item>
+        <item>высоко</item>
+        <item>высокая</item>
+    </string-array>
+    <string-array name="keywords_middle" tools:ignore="InconsistentArrays">
+        <item>средняя</item>
+        <item>средний</item>
+        <item>половина</item>
+    </string-array>
+    <string-array name="keywords_min" tools:ignore="InconsistentArrays">
+        <item>минимум</item>
+        <item>низкий</item>
+        <item>низкая</item>
+    </string-array>
+    <string-array name="keywords_quieter" tools:ignore="InconsistentArrays">
+        <item>тише</item>
+        <item>ниже</item>
+        <item>снизить</item>
+        <item>снизь</item>
+    </string-array>
+    <string-array name="keywords_loudly" tools:ignore="InconsistentArrays">
+        <item>громче</item>
+        <item>выше</item>
+        <item>повысить</item>
+        <item>повысь</item>
+    </string-array>
+
+    <string-array name="keywords_reply" tools:ignore="InconsistentArrays">
+        <item>ответь</item>
+        <item>отзовись</item>
+        <item>проверка</item>
+        <item>тест</item>
+    </string-array>
+
+</resources>

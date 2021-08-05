@@ -1,3 +1,73 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">ASK</string>
+
+    <string name="sleep_notification_title">ASK is in sleep mode…</string>
+    <string name="sleep_notification_text">Say \"ASK, wake up!\" to switch to listening mode</string>
+    <string name="listening_notification_title">ASK is in listening mode…</string>
+    <string name="listening_notification_text">Say \"ASK, sleep!\" to switch to sleeping mode</string>
+
+    <string-array name="keywords_name" tools:ignore="InconsistentArrays">
+        <item>ask</item>
+    </string-array>
+
+    <string-array name="keywords_wake_up" tools:ignore="InconsistentArrays">
+        <item>wake up</item>
+        <item>listen</item>
+    </string-array>
+    <string-array name="keywords_sleep" tools:ignore="InconsistentArrays">
+        <item>sleep</item>
+    </string-array>
+
+    <string-array name="keywords_mute" tools:ignore="InconsistentArrays">
+        <item>mute</item>
+        <item>turn off sound</item>
+        <item>turn sound off</item>
+        <item>turn off the sound</item>
+        <item>turn the sound off</item>
+    </string-array>
+    <string-array name="keywords_unmute" tools:ignore="InconsistentArrays">
+        <item>unmute</item>
+        <item>turn on sound</item>
+        <item>turn sound on</item>
+        <item>turn on the sound</item>
+        <item>turn the sound on</item>
+    </string-array>
+
+    <string-array name="keywords_volume" tools:ignore="InconsistentArrays">
+        <item>volume</item>
+        <item>level</item>
+        <item>loudness</item>
+        <item>sound</item>
+        <item>make</item>
+    </string-array>
+    <string-array name="keywords_max" tools:ignore="InconsistentArrays">
+        <item>maximum</item>
+        <item>high</item>
+    </string-array>
+    <string-array name="keywords_middle" tools:ignore="InconsistentArrays">
+        <item>average</item>
+        <item>medium</item>
+        <item>middle</item>
+        <item>half</item>
+    </string-array>
+    <string-array name="keywords_min" tools:ignore="InconsistentArrays">
+        <item>minimum</item>
+        <item>low</item>
+    </string-array>
+    <string-array name="keywords_quieter" tools:ignore="InconsistentArrays">
+        <item>quieter</item>
+        <item>lower</item>
+    </string-array>
+    <string-array name="keywords_loudly" tools:ignore="InconsistentArrays">
+        <item>loudly</item>
+        <item>higher</item>
+    </string-array>
+
+    <string-array name="keywords_reply" tools:ignore="InconsistentArrays">
+        <item>reply</item>
+        <item>respond</item>
+        <item>check</item>
+        <item>test</item>
+    </string-array>
+
 </resources>

@@ -44,6 +44,7 @@ class AskActivity : AppCompatActivity() {
         }
 
         binding.stop.setOnClickListener {
+            stopService(Intent(this, ContinuousSpeechRecognition::class.java))
         }
     }
 }

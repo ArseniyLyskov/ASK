@@ -14,6 +14,7 @@ import androidx.core.app.NotificationCompat
 
 class ContinuousSpeechRecognition : Service(), RecognitionListener {
     private lateinit var speechRecognizer: SpeechRecognizer
+    private var sleepMode = false
     private val recognizingIntent = initRecognizingIntent()
 
     private fun initRecognizingIntent(): Intent {
@@ -50,18 +51,30 @@ class ContinuousSpeechRecognition : Service(), RecognitionListener {
         }
     }
 
-    private fun buildNotification(context: Context): Notification {
-        val notificationBuilder = NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle("ASK is listening...")
-            .setContentText("Click to manage")
-            .setOngoing(true)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+    private fun buildNotification(context: Context, sleepMode: Boolean): Notification {
+        val notificationBuilder =
+            if (sleepMode) NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(getString(R.string.sleep_notification_title))
+                .setContentText(getString(R.string.sleep_notification_text))
+                .setOngoing(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+            else NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(getString(R.string.listening_notification_title))
+                .setContentText(getString(R.string.listening_notification_text))
+                .setOngoing(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
 
         val notificationIntent = Intent(context, AskActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0)
         notificationBuilder.setContentIntent(pendingIntent)
         return notificationBuilder.build()
+    }
+
+    private fun notifyUserModeSwitched() {
+        startForeground(Constants.NOTIFICATION_ID, buildNotification(this, sleepMode))
+        SoundEffects.getInstance().executeEffect(if (sleepMode) SoundEffects.SOUND_OFF else SoundEffects.SOUND_ON)
     }
 
 
@@ -87,12 +100,16 @@ class ContinuousSpeechRecognition : Service(), RecognitionListener {
         Log.d(Constants.MY_TAG, "CSR: onStartCommand")
 
         createNotificationChannelIfNeeded()
-        startForeground(Constants.NOTIFICATION_ID, buildNotification(this))
+        startForeground(Constants.NOTIFICATION_ID, buildNotification(this, sleepMode))
 
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
         continueSpeechRecognition()
 
-        SoundEffects.getInstance().executeEffect(SoundEffects.SOUND_ON)
+        SoundEffects.getInstance()
+            .run {
+                setVolumeLevel(((getMaxVolumeLevel() - getMinVolumeLevel()) / 2f + getMinVolumeLevel()).toInt())
+                executeEffect(SoundEffects.SOUND_ON)
+            }
 
         return START_STICKY
     }
@@ -116,36 +133,28 @@ class ContinuousSpeechRecognition : Service(), RecognitionListener {
     override fun onEndOfSpeech() {}
 
     override fun onError(p0: Int) {
-        val errorCause = "Error: " + when (p0) {
-            1 -> "Network operation timed out."
-            2 -> "Other network related errors."
-            3 -> "Audio recording error."
-            4 -> "Server sends error status."
-            5 -> "Other client side errors."
-            6 -> "No speech input"
-            7 -> "No recognition result matched."
-            8 -> "RecognitionService busy."
-            9 -> "Insufficient permissions"
-            10 -> "Too many requests from the same client."
-            11 -> "Server has been disconnected, e.g. because the app has crashed."
-            12 -> "Requested language is not available to be used with the current recognizer."
-            else -> "Unknown error"
-        }
-        Log.d(Constants.MY_TAG, errorCause)
+        RecognizerProcessor.processError(p0)
 
         continueSpeechRecognition()
     }
 
     override fun onResults(p0: Bundle?) {
-        var results = "Heard: \n"
         val data = p0?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) ?: return
-        for (i in 0 until data.size) {
-            results += "Version ${i + 1}: ${data[i]}\n"
+        var recognizedString = ""
+        data.forEach {
+            recognizedString += "\n$it"
         }
-        Log.d(Constants.MY_TAG, results)
-
-        if (results.contains("мотылёк", true))
-            SoundEffects.getInstance().executeEffect(SoundEffects.SOUND_SUCCESS)
+        Log.d(Constants.MY_TAG, recognizedString)
+        when (RecognizerProcessor.processResult(this, recognizedString, sleepMode)) {
+            RecognizerProcessor.ACTION_SWITCH_TO_LISTENING_MODE -> {
+                sleepMode = false
+                notifyUserModeSwitched()
+            }
+            RecognizerProcessor.ACTION_SWITCH_TO_SLEEP_MODE -> {
+                sleepMode = true
+                notifyUserModeSwitched()
+            }
+        }
 
         continueSpeechRecognition()
     }
