@@ -27,6 +27,13 @@
                 android:exported="true"
                 android:foregroundServiceType="microphone"
         />
+
+        <receiver
+                android:name=".AlarmReceiver"
+                android:enabled="true"
+                android:exported="true"
+        />
+
     </application>
 
 </manifest>
