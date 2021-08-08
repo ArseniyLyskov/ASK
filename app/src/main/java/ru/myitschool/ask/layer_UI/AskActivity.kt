@@ -1,4 +1,4 @@
-package ru.myitschool.ask
+package ru.myitschool.ask.layer_UI
 
 import android.app.Activity
 import android.content.Context
@@ -9,10 +9,21 @@ import android.speech.SpeechRecognizer
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import ru.myitschool.ask.databinding.ActivityMainBinding
+import ru.myitschool.ask.Constants
+import ru.myitschool.ask.ContinuousSpeechRecognition
+import ru.myitschool.ask.R
+import ru.myitschool.ask.SoundEffects
 
 class AskActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
+
+    fun turnRecognizer(turnOn: Boolean) {
+        val intent = Intent(this, ContinuousSpeechRecognition::class.java)
+        intent.putExtra(Constants.INTENT_EXTRA_SWITCH_RECOGNIZER_MODE, Constants.INTENT_EXTRA_MODE_NONE)
+        if (turnOn)
+            startService(intent)
+        else
+            stopService(intent)
+    }
 
     private fun isAllPermissionsGranted() = Constants.REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
@@ -32,19 +43,10 @@ class AskActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_ask)
 
         requestPermissionsIfNeeded(this)
         checkListeningAvailability(this)
         SoundEffects.createInstance(this)
-
-        binding.start.setOnClickListener {
-            startService(Intent(this, ContinuousSpeechRecognition::class.java))
-        }
-
-        binding.stop.setOnClickListener {
-            stopService(Intent(this, ContinuousSpeechRecognition::class.java))
-        }
     }
 }

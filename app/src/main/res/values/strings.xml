@@ -12,25 +12,29 @@
 
     <string-array name="keywords_wake_up" tools:ignore="InconsistentArrays">
         <item>wake up</item>
-        <item>listen</item>
     </string-array>
     <string-array name="keywords_sleep" tools:ignore="InconsistentArrays">
         <item>sleep</item>
     </string-array>
 
+    <string-array name="keywords_on" tools:ignore="InconsistentArrays">
+        <item>on</item>
+    </string-array>
+    <string-array name="keywords_off" tools:ignore="InconsistentArrays">
+        <item>off</item>
+        <item>cancel</item>
+    </string-array>
+
     <string-array name="keywords_mute" tools:ignore="InconsistentArrays">
         <item>mute</item>
-        <item>turn off sound</item>
-        <item>turn sound off</item>
-        <item>turn off the sound</item>
-        <item>turn the sound off</item>
+        <item>silent</item>
+        <item>silence</item>
     </string-array>
     <string-array name="keywords_unmute" tools:ignore="InconsistentArrays">
         <item>unmute</item>
-        <item>turn on sound</item>
-        <item>turn sound on</item>
-        <item>turn on the sound</item>
-        <item>turn the sound on</item>
+        <item>speak</item>
+        <item>say</item>
+        <item>talk</item>
     </string-array>
 
     <string-array name="keywords_volume" tools:ignore="InconsistentArrays">
@@ -68,6 +72,36 @@
         <item>respond</item>
         <item>check</item>
         <item>test</item>
+    </string-array>
+
+    <string-array name="keywords_alarm" tools:ignore="InconsistentArrays">
+        <item>alarm</item>
+        <item>clock</item>
+    </string-array>
+
+    <string-array name="keywords_timer" tools:ignore="InconsistentArrays">
+        <item>timer</item>
+        <item>countdown</item>
+    </string-array>
+
+    <string-array name="keywords_play" tools:ignore="InconsistentArrays">
+        <item>music</item>
+        <item>play</item>
+        <item>song</item>
+        <item>continue</item>
+    </string-array>
+    <string-array name="keywords_pause" tools:ignore="InconsistentArrays">
+        <item>pause</item>
+    </string-array>
+    <string-array name="keywords_stop" tools:ignore="InconsistentArrays">
+        <item>stop</item>
+    </string-array>
+    <string-array name="keywords_seek" tools:ignore="InconsistentArrays">
+        <item>seek</item>
+        <item>rewind</item>
+    </string-array>
+    <string-array name="keywords_beginning" tools:ignore="InconsistentArrays">
+        <item>beginning</item>
     </string-array>
 
 </resources>
