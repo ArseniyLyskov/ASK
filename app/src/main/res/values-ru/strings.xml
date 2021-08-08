@@ -14,23 +14,28 @@
     <string-array name="keywords_wake_up" tools:ignore="InconsistentArrays">
         <item>проснуться</item>
         <item>проснись</item>
-        <item>слушать</item>
-        <item>слушай</item>
     </string-array>
     <string-array name="keywords_sleep" tools:ignore="InconsistentArrays">
         <item>спать</item>
         <item>спи</item>
     </string-array>
 
+    <string-array name="keywords_on" tools:ignore="InconsistentArrays">
+        <item>включи</item>
+    </string-array>
+    <string-array name="keywords_off" tools:ignore="InconsistentArrays">
+        <item>выключи</item>
+        <item>отмени</item>
+    </string-array>
+
     <string-array name="keywords_mute" tools:ignore="InconsistentArrays">
-        <item>выключить звук</item>
-        <item>выключи звук</item>
         <item>без звука</item>
+        <item>молчать</item>
+        <item>молчи</item>
     </string-array>
     <string-array name="keywords_unmute" tools:ignore="InconsistentArrays">
-        <item>включить звук</item>
-        <item>включи звук</item>
         <item>со звуком</item>
+        <item>говори</item>
     </string-array>
 
     <string-array name="keywords_volume" tools:ignore="InconsistentArrays">
@@ -72,6 +77,37 @@
         <item>отзовись</item>
         <item>проверка</item>
         <item>тест</item>
+    </string-array>
+
+    <string-array name="keywords_alarm" tools:ignore="InconsistentArrays">
+        <item>будильник</item>
+    </string-array>
+
+    <string-array name="keywords_timer" tools:ignore="InconsistentArrays">
+        <item>таймер</item>
+        <item>отсчет</item>
+    </string-array>
+
+    <string-array name="keywords_play" tools:ignore="InconsistentArrays">
+        <item>сыграй</item>
+        <item>играй</item>
+        <item>продолжи</item>
+        <item>продолжай</item>
+    </string-array>
+    <string-array name="keywords_pause" tools:ignore="InconsistentArrays">
+        <item>пауза</item>
+        <item>паузу</item>
+    </string-array>
+    <string-array name="keywords_stop" tools:ignore="InconsistentArrays">
+        <item>стоп</item>
+    </string-array>
+    <string-array name="keywords_seek" tools:ignore="InconsistentArrays">
+        <item>перемотать</item>
+        <item>перемотай</item>
+    </string-array>
+    <string-array name="keywords_beginning" tools:ignore="InconsistentArrays">
+        <item>начало</item>
+        <item>началу</item>
     </string-array>
 
 </resources>

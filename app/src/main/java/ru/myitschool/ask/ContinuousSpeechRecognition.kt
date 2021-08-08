@@ -10,12 +10,19 @@ import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import ru.myitschool.ask.layer_UI.AskActivity
 
 
 class ContinuousSpeechRecognition : Service(), RecognitionListener {
     private lateinit var speechRecognizer: SpeechRecognizer
     private var sleepMode = false
     private val recognizingIntent = initRecognizingIntent()
+
+    companion object {
+        private var running = false
+
+        fun isRunning() = running
+    }
 
     private fun initRecognizingIntent(): Intent {
         return Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
@@ -53,21 +60,22 @@ class ContinuousSpeechRecognition : Service(), RecognitionListener {
 
     private fun buildNotification(context: Context, sleepMode: Boolean): Notification {
         val notificationBuilder =
-            if (sleepMode) NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_ID)
+            NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(getString(R.string.sleep_notification_title))
-                .setContentText(getString(R.string.sleep_notification_text))
-                .setOngoing(true)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-            else NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(getString(R.string.listening_notification_title))
-                .setContentText(getString(R.string.listening_notification_text))
+                .setContentTitle(
+                    if (sleepMode) getString(R.string.sleep_notification_title)
+                    else getString(R.string.listening_notification_title)
+                )
+                .setContentText(
+                    if (sleepMode) getString(R.string.sleep_notification_text)
+                    else getString(R.string.listening_notification_text)
+                )
                 .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
 
+
         val notificationIntent = Intent(context, AskActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0)
+        val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         notificationBuilder.setContentIntent(pendingIntent)
         return notificationBuilder.build()
     }
@@ -83,6 +91,7 @@ class ContinuousSpeechRecognition : Service(), RecognitionListener {
 
     override fun onCreate() {
         super.onCreate()
+        running = true
         Log.d(Constants.MY_TAG, "CSR: onCreate")
     }
 
@@ -93,23 +102,41 @@ class ContinuousSpeechRecognition : Service(), RecognitionListener {
             executeEffect(SoundEffects.SOUND_OFF)
             setOtherSoundsMuting(false)
         }
+        running = false
         Log.d(Constants.MY_TAG, "CSR: onDestroy")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d(Constants.MY_TAG, "CSR: onStartCommand")
+        Log.d(
+            Constants.MY_TAG,
+            "CSR: onStartCommand ${intent?.getStringExtra(Constants.INTENT_EXTRA_SWITCH_RECOGNIZER_MODE)}"
+        )
 
-        createNotificationChannelIfNeeded()
-        startForeground(Constants.NOTIFICATION_ID, buildNotification(this, sleepMode))
+        if (intent != null) {
+            when (intent.getStringExtra(Constants.INTENT_EXTRA_SWITCH_RECOGNIZER_MODE)) {
+                Constants.INTENT_EXTRA_MODE_LISTENING -> {
+                    sleepMode = false
+                    notifyUserModeSwitched()
+                }
+                Constants.INTENT_EXTRA_MODE_SLEEP -> {
+                    sleepMode = true
+                    notifyUserModeSwitched()
+                }
+                Constants.INTENT_EXTRA_MODE_NONE -> {
+                    createNotificationChannelIfNeeded()
+                    startForeground(Constants.NOTIFICATION_ID, buildNotification(this, sleepMode))
 
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
-        continueSpeechRecognition()
+                    speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
+                    continueSpeechRecognition()
 
-        SoundEffects.getInstance()
-            .run {
-                setVolumeLevel(((getMaxVolumeLevel() - getMinVolumeLevel()) / 2f + getMinVolumeLevel()).toInt())
-                executeEffect(SoundEffects.SOUND_ON)
+                    SoundEffects.getInstance()
+                        .run {
+                            setVolumeLevel(((getMaxVolumeLevel() - getMinVolumeLevel()) / 2f + getMinVolumeLevel()).toInt())
+                            executeEffect(SoundEffects.SOUND_ON)
+                        }
+                }
             }
+        }
 
         return START_STICKY
     }
@@ -145,16 +172,7 @@ class ContinuousSpeechRecognition : Service(), RecognitionListener {
             recognizedString += "\n$it"
         }
         Log.d(Constants.MY_TAG, recognizedString)
-        when (RecognizerProcessor.processResult(this, recognizedString, sleepMode)) {
-            RecognizerProcessor.ACTION_SWITCH_TO_LISTENING_MODE -> {
-                sleepMode = false
-                notifyUserModeSwitched()
-            }
-            RecognizerProcessor.ACTION_SWITCH_TO_SLEEP_MODE -> {
-                sleepMode = true
-                notifyUserModeSwitched()
-            }
-        }
+        RecognizerProcessor.processResult(this, recognizedString, sleepMode)
 
         continueSpeechRecognition()
     }
