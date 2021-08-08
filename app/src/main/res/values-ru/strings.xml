@@ -1,6 +1,15 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">ASK</string>
 
+    <string name="tab_power">Аск</string>
+    <string name="tab_alarm">Будильники</string>
+    <string name="tab_chosen_music">Музыка</string>
+    <string name="tab_all_music">Хранилище</string>
+    <string name="tab_commands">Команды</string>
+
+    <string name="error">Ошибка</string>
+    <string name="error_recognition_unavailable">К сожалению, на вашем устройстве невозможно распознавание голоса.</string>
+
     <string name="sleep_notification_title">ASK в режиме сна…</string>
     <string name="sleep_notification_text">Скажите \"ASK, проснись!\" для перехода в слушающий режим</string>
     <string name="listening_notification_title">ASK в режиме прослушивания…</string>

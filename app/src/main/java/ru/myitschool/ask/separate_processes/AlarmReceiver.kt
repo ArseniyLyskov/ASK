@@ -1,4 +1,4 @@
-package ru.myitschool.ask
+package ru.myitschool.ask.separate_processes
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -10,13 +10,14 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.os.Build
+import ru.myitschool.ask.Constants
 
 class AlarmReceiver : BroadcastReceiver() {
 
     companion object {
         private lateinit var alarmPlayer: MediaPlayer
 
-        fun isAlarmPlayerInitialized() = ::alarmPlayer.isInitialized
+        fun isAlarmPlayerInitialized() = Companion::alarmPlayer.isInitialized
     }
 
     private fun buildAlarmPlayer(context: Context): MediaPlayer {
@@ -41,6 +42,7 @@ class AlarmReceiver : BroadcastReceiver() {
         } else {
             if (isAlarmPlayerInitialized())
                 alarmPlayer.stop()
+
             val cancelIntent =
                 Intent(context, AlarmReceiver::class.java).run {
                     putExtra(Constants.INTENT_EXTRA_IS_TURNING_ALARM_ON, true)

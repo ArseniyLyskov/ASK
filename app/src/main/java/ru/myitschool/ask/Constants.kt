@@ -28,4 +28,14 @@ object Constants {
             )
         }
 
+    fun getTabContent(): IntArray {
+        return intArrayOf(
+            R.drawable.ask_icon_power,
+            R.drawable.ask_icon_alarm,
+            R.drawable.ask_icon_music,
+            R.drawable.ask_icon_storage,
+            R.drawable.ask_icon_question
+        )
+    }
+
 }

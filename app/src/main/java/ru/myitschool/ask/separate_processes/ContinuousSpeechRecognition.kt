@@ -1,4 +1,4 @@
-package ru.myitschool.ask
+package ru.myitschool.ask.separate_processes
 
 import android.app.*
 import android.content.Context
@@ -10,31 +10,30 @@ import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import ru.myitschool.ask.Constants
+import ru.myitschool.ask.R
+import ru.myitschool.ask.SoundEffects
 import ru.myitschool.ask.layer_UI.AskActivity
 
 
 class ContinuousSpeechRecognition : Service(), RecognitionListener {
     private lateinit var speechRecognizer: SpeechRecognizer
     private var sleepMode = false
-    private val recognizingIntent = initRecognizingIntent()
+    private val recognizingIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+        putExtra(
+            RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+            RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+        )
+        putExtra(
+            RecognizerIntent.EXTRA_MAX_RESULTS,
+            5
+        )
+    }
 
     companion object {
         private var running = false
 
         fun isRunning() = running
-    }
-
-    private fun initRecognizingIntent(): Intent {
-        return Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(
-                RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
-            )
-            putExtra(
-                RecognizerIntent.EXTRA_MAX_RESULTS,
-                5
-            )
-        }
     }
 
     private fun continueSpeechRecognition() {
@@ -61,7 +60,7 @@ class ContinuousSpeechRecognition : Service(), RecognitionListener {
     private fun buildNotification(context: Context, sleepMode: Boolean): Notification {
         val notificationBuilder =
             NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ask_icon_app)
                 .setContentTitle(
                     if (sleepMode) getString(R.string.sleep_notification_title)
                     else getString(R.string.listening_notification_title)

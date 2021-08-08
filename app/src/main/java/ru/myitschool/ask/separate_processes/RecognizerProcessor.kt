@@ -1,10 +1,13 @@
-package ru.myitschool.ask
+package ru.myitschool.ask.separate_processes
 
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import ru.myitschool.ask.Constants
+import ru.myitschool.ask.R
+import ru.myitschool.ask.SoundEffects
 import java.util.*
 
 object RecognizerProcessor {

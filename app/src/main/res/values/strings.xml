@@ -1,6 +1,15 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">ASK</string>
 
+    <string name="tab_power">Ask</string>
+    <string name="tab_alarm">Alarms</string>
+    <string name="tab_chosen_music">Music</string>
+    <string name="tab_all_music">Storage</string>
+    <string name="tab_commands">Commands</string>
+
+    <string name="error">Error</string>
+    <string name="error_recognition_unavailable">Unfortunately, voice recognition is not possible on your device.</string>
+
     <string name="sleep_notification_title">ASK is in sleep mode…</string>
     <string name="sleep_notification_text">Say \"ASK, wake up!\" to switch to listening mode</string>
     <string name="listening_notification_title">ASK is in listening mode…</string>

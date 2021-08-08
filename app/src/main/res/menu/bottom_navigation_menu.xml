@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+            android:id="@+id/power"
+            android:enabled="true"
+            android:icon="@drawable/ask_icon_power"
+            android:title="@string/tab_power"/>
+    <item
+            android:id="@+id/alarm"
+            android:enabled="true"
+            android:icon="@drawable/ask_icon_alarm"
+            android:title="@string/tab_alarm"/>
+    <item
+            android:id="@+id/music"
+            android:enabled="true"
+            android:icon="@drawable/ask_icon_music"
+            android:title="@string/tab_chosen_music"/>
+    <item
+            android:id="@+id/storage"
+            android:enabled="true"
+            android:icon="@drawable/ask_icon_storage"
+            android:title="@string/tab_all_music"/>
+    <item
+            android:id="@+id/commands"
+            android:enabled="true"
+            android:icon="@drawable/ask_icon_question"
+            android:title="@string/tab_commands"/>
+</menu>

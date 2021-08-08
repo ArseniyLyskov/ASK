@@ -1,18 +1,17 @@
 package ru.myitschool.ask.layer_UI
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.speech.SpeechRecognizer
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import ru.myitschool.ask.Constants
-import ru.myitschool.ask.ContinuousSpeechRecognition
 import ru.myitschool.ask.R
 import ru.myitschool.ask.SoundEffects
+import ru.myitschool.ask.separate_processes.ContinuousSpeechRecognition
 
 class AskActivity : AppCompatActivity() {
 
@@ -25,28 +24,22 @@ class AskActivity : AppCompatActivity() {
             stopService(intent)
     }
 
-    private fun isAllPermissionsGranted() = Constants.REQUIRED_PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
-    }
+    private fun setupTabLayout(context: Context) {
+        val viewPager: ViewPager2 = findViewById(R.id.view_pager)
+        val tabs: TabLayout = findViewById(R.id.tabs)
+        val sectionsPagerAdapter = SectionsPagerAdapter(this)
+        viewPager.adapter = sectionsPagerAdapter
 
-    private fun requestPermissionsIfNeeded(activity: Activity) {
-        if (!isAllPermissionsGranted()) {
-            ActivityCompat.requestPermissions(activity, Constants.REQUIRED_PERMISSIONS, 10)
-        } //TODO: check result
-    }
-
-    private fun checkListeningAvailability(context: Context) {
-        if (!SpeechRecognizer.isRecognitionAvailable(context)) {
-            return //TODO: explanation
-        }
+        TabLayoutMediator(tabs, viewPager) { tab, position ->
+            tab.icon = ContextCompat.getDrawable(context, Constants.getTabContent()[position])
+        }.attach()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ask)
+        setupTabLayout(this)
 
-        requestPermissionsIfNeeded(this)
-        checkListeningAvailability(this)
         SoundEffects.createInstance(this)
     }
 }
