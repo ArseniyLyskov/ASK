@@ -13,7 +13,7 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
 
-        <activity android:name=".AskActivity">
+        <activity android:name=".layer_UI.AskActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
