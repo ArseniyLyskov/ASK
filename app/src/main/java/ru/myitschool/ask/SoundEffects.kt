@@ -22,6 +22,8 @@ class SoundEffects private constructor(context: Context) {
         const val SOUND_SUCCESS = 3
         const val SOUND_FAILURE = 4
 
+        // Очень синглтон
+
         fun createInstance(context: Context) {
             INSTANCE = SoundEffects(context)
         }
@@ -61,8 +63,11 @@ class SoundEffects private constructor(context: Context) {
     fun getMinVolumeLevel() =
         audioManager.getStreamMaxVolume(AudioManager.STREAM_RING) / 10f
 
+    // Проверка на аудиофокус и заглушка встроенных
+    // звуковых сигналов старта и конца записи
     fun setOtherSoundsMuting(mute: Boolean) {
         fun muteStreamsExceptRing(streams: IntArray) {
+            // Разные версии - разные подходы
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 streams.forEach { stream ->
                     audioManager.adjustStreamVolume(
@@ -96,6 +101,8 @@ class SoundEffects private constructor(context: Context) {
     }
 
     private fun buildMediaPlayer(context: Context, resid: Int): MediaPlayer {
+        // Создание плеера в аудиопотоке, в котором вещает recognizer
+
         val mediaPlayer = MediaPlayer()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mediaPlayer.setAudioAttributes(

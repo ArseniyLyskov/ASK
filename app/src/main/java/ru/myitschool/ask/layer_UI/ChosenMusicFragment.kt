@@ -14,7 +14,8 @@ class ChosenMusicFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_chosen_music, container, false)
-
+        //TODO: здесь будет реализован список музыки, отобранный пользователем для прослушивания recognizer'ом
+        // "Включи гимн России!" - если в списке отобранных произведений есть "гимн россии" - включается
         return view
     }
 

@@ -15,7 +15,7 @@ class AlarmFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_alarm, container, false)
 
-        return view
+        return view     //TODO: отображение и управление активными будильниками/таймерами recognizer'а
     }
 
 }

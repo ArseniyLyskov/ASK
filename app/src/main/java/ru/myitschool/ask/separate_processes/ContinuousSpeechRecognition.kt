@@ -37,6 +37,11 @@ class ContinuousSpeechRecognition : Service(), RecognitionListener {
     }
 
     private fun continueSpeechRecognition() {
+        // Перезапуск встроенного recognizer, неспособного
+        // на постоянное прослушивание, но отлично совместимого
+        // с ранними версиями
+        // + проверка на аудиофокус и заглушка встроенных
+        // звуковых сигналов старта и конца записи
         SoundEffects.getInstance().setOtherSoundsMuting(true)
         speechRecognizer.run {
             destroy()
@@ -58,6 +63,8 @@ class ContinuousSpeechRecognition : Service(), RecognitionListener {
     }
 
     private fun buildNotification(context: Context, sleepMode: Boolean): Notification {
+        // Возвращение уведомления пользователю о обновлённом sleep/listening
+        // состоянии recognizer'а
         val notificationBuilder =
             NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ask_icon_app)
@@ -111,17 +118,17 @@ class ContinuousSpeechRecognition : Service(), RecognitionListener {
             "CSR: onStartCommand ${intent?.getStringExtra(Constants.INTENT_EXTRA_SWITCH_RECOGNIZER_MODE)}"
         )
 
-        if (intent != null) {
+        if (intent != null) { // Поведение в зависимости от интента
             when (intent.getStringExtra(Constants.INTENT_EXTRA_SWITCH_RECOGNIZER_MODE)) {
-                Constants.INTENT_EXTRA_MODE_LISTENING -> {
+                Constants.INTENT_EXTRA_MODE_LISTENING -> { // интент - приказ слушать
                     sleepMode = false
                     notifyUserModeSwitched()
                 }
-                Constants.INTENT_EXTRA_MODE_SLEEP -> {
+                Constants.INTENT_EXTRA_MODE_SLEEP -> { // интент - приказ спать
                     sleepMode = true
                     notifyUserModeSwitched()
                 }
-                Constants.INTENT_EXTRA_MODE_NONE -> {
+                Constants.INTENT_EXTRA_MODE_NONE -> { // интент - запуск
                     createNotificationChannelIfNeeded()
                     startForeground(Constants.NOTIFICATION_ID, buildNotification(this, sleepMode))
 
@@ -171,6 +178,8 @@ class ContinuousSpeechRecognition : Service(), RecognitionListener {
             recognizedString += "\n$it"
         }
         Log.d(Constants.MY_TAG, recognizedString)
+        // Отправка строки разпознанной речи на обработку
+        // классу-обработчику. //TODO: обрабатывать в другом потоке / корутине
         RecognizerProcessor.processResult(this, recognizedString, sleepMode)
 
         continueSpeechRecognition()

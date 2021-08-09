@@ -11,11 +11,13 @@ import com.google.android.material.tabs.TabLayoutMediator
 import ru.myitschool.ask.Constants
 import ru.myitschool.ask.R
 import ru.myitschool.ask.SoundEffects
+import ru.myitschool.ask.adapters.SectionsPagerAdapter
 import ru.myitschool.ask.separate_processes.ContinuousSpeechRecognition
 
 class AskActivity : AppCompatActivity() {
 
     fun turnRecognizer(turnOn: Boolean) {
+        // Отправка сервису интента с инфо о смене вкл/выкл
         val intent = Intent(this, ContinuousSpeechRecognition::class.java)
         intent.putExtra(Constants.INTENT_EXTRA_SWITCH_RECOGNIZER_MODE, Constants.INTENT_EXTRA_MODE_NONE)
         if (turnOn)
@@ -26,11 +28,10 @@ class AskActivity : AppCompatActivity() {
 
     private fun setupTabLayout(context: Context) {
         val viewPager: ViewPager2 = findViewById(R.id.view_pager)
-        val tabs: TabLayout = findViewById(R.id.tabs)
-        val sectionsPagerAdapter = SectionsPagerAdapter(this)
-        viewPager.adapter = sectionsPagerAdapter
+        val tabLayout: TabLayout = findViewById(R.id.tab_layout)
+        viewPager.adapter = SectionsPagerAdapter(this)
 
-        TabLayoutMediator(tabs, viewPager) { tab, position ->
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.icon = ContextCompat.getDrawable(context, Constants.getTabContent()[position])
         }.attach()
     }
@@ -40,6 +41,7 @@ class AskActivity : AppCompatActivity() {
         setContentView(R.layout.activity_ask)
         setupTabLayout(this)
 
+        // Инициализация синглтона с параметром, коряво)
         SoundEffects.createInstance(this)
     }
 }

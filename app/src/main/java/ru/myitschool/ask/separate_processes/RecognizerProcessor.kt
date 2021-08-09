@@ -13,6 +13,7 @@ import java.util.*
 object RecognizerProcessor {
 
     fun processError(errorCode: Int) {
+        // В документации описано больше ошибок и подробнее, нежели SpeechRecognizer.ERROR_...
         val errorCause = "Error: " + when (errorCode) {
             1 -> "Network operation timed out."
             2 -> "Other network related errors."
@@ -29,6 +30,8 @@ object RecognizerProcessor {
             else -> "Unknown error"
         }
 
+        // Если жалуется не на отсутствие речи / её неразборчивость, проблема
+        // требует внимания пользователя
         if (errorCode !in 6..7) {
             SoundEffects.getInstance().executeEffect(SoundEffects.SOUND_FAILURE)
         }
@@ -38,6 +41,7 @@ object RecognizerProcessor {
 
     fun processResult(context: Context, recognized: String, sleepMode: Boolean) {
 
+        // Лямбда для сокращения и читабельности кода
         val actionIfHeard = { keyWordsResId: Int,
                               notifyHeard: Boolean,
                               action: () -> Unit ->
@@ -50,6 +54,8 @@ object RecognizerProcessor {
 
         SoundEffects.getInstance().run {
 
+            // Команды спать, слушать и отозваться работают как в обычном режиме,
+            // так и в спящем при обращении к программе по имени (ask)
             if ((sleepMode && isContainsKeyWordIgnoreCase(context, recognized, R.array.keywords_name)) || !sleepMode) {
                 actionIfHeard(R.array.keywords_wake_up, false) {
                     val intent = Intent(context, ContinuousSpeechRecognition::class.java)
@@ -70,7 +76,7 @@ object RecognizerProcessor {
                 actionIfHeard(R.array.keywords_reply, true) {}
             }
 
-            if (sleepMode)
+            if (sleepMode) // Если спящий режим, дальнейшая обработка лишняя
                 return
 
             actionIfHeard(R.array.keywords_mute, true) { setMute(true) }
@@ -80,6 +86,7 @@ object RecognizerProcessor {
                 actionIfHeard(R.array.keywords_volume, true) { setMute(false) }
             }
 
+            // Выключение: звука, будильника и таймера
             actionIfHeard(R.array.keywords_off, false) {
                 actionIfHeard(R.array.keywords_volume, true) { setMute(true) }
 
@@ -90,6 +97,11 @@ object RecognizerProcessor {
                     interactWithAlarm(context, false, System.currentTimeMillis(), false, 0)
                 }
             }
+
+            // Приведённые ниже будильник и таймер запускаются при
+            // соответствующей команде с указанием времени в формате
+            // hhmm и mmss соответственно, лучше всего воспринимает
+            // отдельными цифрами
 
             actionIfHeard(R.array.keywords_alarm, false) {
                 if (isContainsTime(recognized)) {
@@ -122,6 +134,7 @@ object RecognizerProcessor {
                 }
             }
 
+            // Команда "звук" с параметрами управления
             actionIfHeard(R.array.keywords_volume, false) {
                 actionIfHeard(R.array.keywords_max, true) { setVolumeLevel(getMaxVolumeLevel()) }
                 actionIfHeard(R.array.keywords_middle, true) { setVolumeLevel((getMaxVolumeLevel() / 2f).toInt()) }
@@ -133,6 +146,9 @@ object RecognizerProcessor {
                     setVolumeLevel((getMaxVolumeLevel() * ((getTenPointVolumeLevel() - 3) / 10f)).toInt())
                 }
 
+                // Если было сказано "Громкость 8" -
+                // громкость переводится в десятичную шкалу
+                // и устанавливется 8
                 if (isContainsNumber(recognized)) {
                     val number = getStringOfNumber(recognized)
                     if (number.canBeVolumeLevel()) {
@@ -146,6 +162,7 @@ object RecognizerProcessor {
         }
     }
 
+    // Вынесенная функция по запуску/остановке будильника/таймера
     private fun interactWithAlarm(
         context: Context, turnOn: Boolean,
         triggerAtMillis: Long, repeating: Boolean, interval: Long
@@ -161,6 +178,9 @@ object RecognizerProcessor {
         else
             alarmManager.set(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
     }
+
+
+    // Функции парсинга строк
 
     private fun isContainsKeyWordIgnoreCase(context: Context, recognized: String, keyWordsResId: Int): Boolean {
         val keyWords: Array<String> = context.resources.getStringArray(keyWordsResId)

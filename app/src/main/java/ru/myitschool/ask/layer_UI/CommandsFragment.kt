@@ -14,7 +14,7 @@ class CommandsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_commands, container, false)
-
+        //TODO: к завершению проекта описать здесь голосовые команды и прочее "how to"
         return view
     }
 }
